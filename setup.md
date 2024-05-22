@@ -32,7 +32,7 @@
 4. Create environment variable files for different environments:
 
    - **.env.dev**
-     ```env
+     ```
     DATABASE_USER=root
     DATABASE_PASSWORD=you_user
     DATABASE_DB=you_db
@@ -44,7 +44,7 @@
      ```
 
    - **.env.test**
-     ```env
+     ```
     DATABASE_USER=root
     DATABASE_PASSWORD=you_user
     DATABASE_DB=you_db
@@ -56,7 +56,7 @@
      ```
 
    - **.env.prod**
-     ```env
+     ```
     DATABASE_USER=root
     DATABASE_PASSWORD=you_user
     DATABASE_DB=you_db
@@ -73,6 +73,7 @@ access the .env.example file to see an example
 5. Use Docker Compose to set up PostgreSQL containers for development, testing, and production:
 
    Create a `docker-compose.yml`:
+   
     make updatabase_test
 
     make updatabase_dev

@@ -1,16 +1,14 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from api.shared.database.dependencies import get_session
+from fastapi import FastAPI
 
+from api.modules.users.routers.user_router import router as user_router
 
 app = FastAPI(tittle="Book Trade")
 
+app.include_router(user_router, prefix="/users")
+
 @app.get("/")
-async def read_root(session: AsyncSession = Depends(get_session)):
-    result = await session.execute(select("SELECT 'Hello, World!' AS message"))
-    message = result.scalar_one()
-    return {"message": message}
+async def read_root():
+    return {"message": "Welcome the Web Book Trade"}
 
 if __name__ == 'main':
     import uvicorn

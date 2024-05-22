@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime
 
-class UserRequest(BaseModel):
+class UserRequestCreate(BaseModel):
     cpf: Annotated[str, Field(min_length=11, max_length=11, description="CPF must be exactly 11 characters.")]
     email: Annotated[EmailStr, Field(max_length=45, description="Email must be at most 45 characters.")]
     name: Annotated[str, Field(min_length=7, max_length=100, description="Name must be between 7 and 100 characters.")]

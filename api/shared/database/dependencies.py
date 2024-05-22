@@ -9,6 +9,12 @@ async def get_db():
     Yields:
         AsyncSession: The database session.
     """
+    async with async_session() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
+            
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
         yield session

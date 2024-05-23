@@ -37,3 +37,5 @@ updatabase_dev:
 updatabase_prod:
 	docker-compose --env-file .env.prod up -d book_trade_prod
 
+py_test:
+	PYTHONPATH=./ pytest -s api/tests

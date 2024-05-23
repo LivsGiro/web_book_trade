@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from api.modules.users.models.User import User
 from api.shared.exceptions.user_exceptions import UserNotFoundException, UserAlreadyExistsException
 from api.shared.exceptions.database_exceptions import DataBaseTransactionException
+from api.modules.users.schemas.user_schema import UserResponsePublic
 
 #pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
@@ -14,7 +15,7 @@ class UserService:
     def __init__(self, session: AsyncSession):
         self.session = session
         
-    async def create_user(self, user_data: dict):
+    async def create_user(self, user_data: dict) -> UserResponsePublic:
         """
         Creates a new user in the database.
 
@@ -56,7 +57,7 @@ class UserService:
         
         return new_user
             
-    async def get_all_users(self, skip: int = 0, limit: int = 10, active: Optional[bool] = None) -> List:
+    async def get_all_users(self, skip: int = 0, limit: int = 10, active: Optional[bool] = None) -> List[UserResponsePublic]:
 
         query = select(User)
         
@@ -73,7 +74,7 @@ class UserService:
             
         return users
         
-    async def get_user_by_id(self, user_id: str):
+    async def get_user_by_id(self, user_id: str) -> UserResponsePublic:
         """
         Retrieves a user by their ID.
 
@@ -115,7 +116,7 @@ class UserService:
         
         return user
         
-    async def get_user_by_email(self, email: str):
+    async def get_user_by_email(self, email: str) -> UserResponsePublic:
         """
         Retrieves a user by their email.
 

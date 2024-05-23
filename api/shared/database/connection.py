@@ -2,16 +2,10 @@ import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
+from api.shared.database.database_config import get_database_url
+    
 
-env = os.getenv("ENV", "development")
-if env == "production":
-    load_dotenv(".env.prod")
-elif env == "testing":
-    load_dotenv(".env.test")
-else:
-    load_dotenv(".env.dev")
-
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = get_database_url()
 print(f"Using database URL: {DATABASE_URL}")
 
 Base = declarative_base()

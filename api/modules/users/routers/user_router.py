@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, Query, status
 from typing import List, Optional
+from uuid import UUID
 
 from api.modules.users.controllers.user_controller import UserController
 from api.modules.users.schemas.user_schema import UserResponsePublic, UserRequestCreate
 
 router = APIRouter()
 
-@router.post("/", response_model=UserResponsePublic, status_code=status.HTTP_200_OK, summary="Create a new user", tags=["users"])
+@router.post("/", response_model=UserResponsePublic, status_code=status.HTTP_201_CREATED, summary="Create a new user", tags=["users"])
 async def create_user(data_user: UserRequestCreate, user_controller: UserController = Depends()
                       ) -> UserResponsePublic:
     """ Create a new user.
@@ -27,7 +28,7 @@ async def create_user(data_user: UserRequestCreate, user_controller: UserControl
     return UserResponsePublic.model_validate(new_user.__dict__)
 
 @router.get("/{user_id}", response_model=UserResponsePublic, status_code=status.HTTP_200_OK, summary="Get a user by id", tags=["users"])
-async def find_user_by_id(user_id: str, user_controller: UserController = Depends()) -> UserResponsePublic:
+async def find_user_by_id(user_id: UUID, user_controller: UserController = Depends()) -> UserResponsePublic:
     """
     Retrieve a user by ID.
 

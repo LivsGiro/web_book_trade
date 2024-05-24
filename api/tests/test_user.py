@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from httpx import AsyncClient
 from fastapi import status
 
-pytest.mark.asyncio
+@pytest.mark.asyncio
 async def test_find_all_users_not_found(client: AsyncClient) -> None:
     """
     Test the behavior when no users are found.

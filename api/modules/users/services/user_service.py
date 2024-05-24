@@ -2,14 +2,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import List, Optional
 from datetime import datetime, timezone
-#from passlib.context import CryptContext
+from passlib.context import CryptContext
 
 from api.modules.users.models.User import User
 from api.shared.exceptions.user_exceptions import UserNotFoundException, UserAlreadyExistsException
 from api.shared.exceptions.database_exceptions import DataBaseTransactionException
 from api.modules.users.schemas.user_schema import UserResponsePublic
 
-#pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 class UserService:
     def __init__(self, session: AsyncSession):
@@ -43,8 +43,8 @@ class UserService:
         else:
             raise UserAlreadyExistsException("User with this email already exists.")
         
-        #hashed_password = pwd_context.hash(user_data["password"])
-        #user_data["password"] = hashed_password
+        hashed_password = pwd_context.hash(user_data["password"])
+        user_data["password"] = hashed_password
         new_user = User(**user_data, dateCreated=datetime.now(timezone.utc))
         try:
             self.session.add(new_user)

@@ -29,4 +29,4 @@ class UserController:
         users = await self.user_service.get_all_users(skip=skip, limit=limit, active=active)
 
         return users
-    
+

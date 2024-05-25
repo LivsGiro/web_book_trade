@@ -3,17 +3,9 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, status
 
 from api.modules.books.controllers.book_controller import BookController
-from api.modules.books.schemas.book_schema import BookResponsePublic, BookRequestCreate
+from api.modules.books.schemas.book_schema import BookResponsePublic
 
 router = APIRouter()
-
-@router.post("/", response_model=BookResponsePublic, status_code=status.HTTP_201_CREATED, summary="Create a new book", tags=["books"])
-async def create_book(data_book: BookRequestCreate, 
-                      book_controller:BookController = Depends()
-                      ) -> BookResponsePublic:
-    new_book = await book_controller.create_new_book(data_book.model_dump())
-    
-    return BookResponsePublic.model_validate(new_book.__dict__)
 
 @router.get("/", response_model=List[BookResponsePublic], status_code=status.HTTP_200_OK, summary="Get a list of books", tags=["books"])
 async def find_all_books(skip: int = Query(0, description="Number of records to skip for pagination"),

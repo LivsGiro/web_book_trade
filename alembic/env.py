@@ -35,6 +35,8 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 from api.shared.database.connection import Base 
 from api.modules.users.models.User import User
+from api.modules.books.models.Book import Book
+
 target_metadata = None
 
 from api.shared.database.connection import Base, DATABASE_URL

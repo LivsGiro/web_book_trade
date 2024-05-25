@@ -33,4 +33,6 @@ class AuthService:
         except InvalidCredentialsException:
             raise InvalidCredentialsException
         
+        return user.id
+        
             

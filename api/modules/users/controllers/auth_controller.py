@@ -9,6 +9,6 @@ class AuthController:
         self.auth_service = AuthService(session)
         
     async def authenticate_user(self, email: str, password: str):
-        token = await self.auth_service.authenticate_user(email, password)
+        user_id = await self.auth_service.authenticate_user(email, password)
         
-        return token
+        return user_id

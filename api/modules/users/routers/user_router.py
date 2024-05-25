@@ -5,6 +5,7 @@ from uuid import UUID
 from api.modules.users.controllers.user_controller import UserController
 from api.modules.users.schemas.user_schema import UserResponsePublic, UserRequestCreate
 
+
 router = APIRouter()
 
 @router.post("/", response_model=UserResponsePublic, status_code=status.HTTP_201_CREATED, summary="Create a new user", tags=["users"])
@@ -71,3 +72,4 @@ async def find_all_users(skip: int = Query(0, description="Number of records to 
     
     users = await user_controller.get_all_users(skip=skip, limit=limit, active=active)     
     return [UserResponsePublic.model_validate(user.__dict__) for user in users]
+

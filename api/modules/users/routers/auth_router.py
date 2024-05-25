@@ -22,9 +22,8 @@ async def authenticate(data: TokenRequest, auth_controller: AuthController = Dep
     Raises:
         InvalidCredentialsException: If the email or password is incorrect.
     """    
-    access_token = await auth_controller.authenticate_user(data.email, data.password)
-    
-    access_token = create_access_token(data={"sub": data.email})
+    user_id = await auth_controller.authenticate_user(data.email, data.password)
+    access_token = create_access_token(user_id=user_id)
     return TokenResponse(access_token=access_token, token_type="bearer")
 
 @router.get("/", summary="Test Authentication", tags=["auth"])

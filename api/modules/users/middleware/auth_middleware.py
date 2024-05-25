@@ -5,7 +5,6 @@ import jwt
 
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        print("Checou no middleware")
         token = request.headers.get('Authorization')
         user_info = None
         

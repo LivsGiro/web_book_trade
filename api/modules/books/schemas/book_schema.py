@@ -1,6 +1,6 @@
 import uuid
 from typing import Annotated, Optional
-from pydantic import BaseModel, Field, UUID4
+from pydantic import BaseModel, Field, UUID4, ConfigDict
 from datetime import datetime
 
 class BookRequestCreate(BaseModel):
@@ -10,8 +10,7 @@ class BookRequestCreate(BaseModel):
     page: Annotated[Optional[int], Field(ge=1, description="Number of pages in the book.")]
     datePublished: Annotated[Optional[datetime], Field(description="Publication date of the book.")]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class BookResponsePublic(BaseModel):
     userId: Annotated[UUID4, Field(description="The UUID of the user who owns the book.")]
@@ -23,5 +22,4 @@ class BookResponsePublic(BaseModel):
     datePublished: Annotated[Optional[datetime], Field()]
     dateCreated: Annotated[datetime, Field(description="Date when the book was added to the database.")]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

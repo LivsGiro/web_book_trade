@@ -1,7 +1,7 @@
 import uuid
 from typing import Annotated
 from typing import Optional
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from datetime import datetime
 
 class UserRequestCreate(BaseModel):
@@ -10,8 +10,7 @@ class UserRequestCreate(BaseModel):
     name: Annotated[str, Field(min_length=7, max_length=100, description="Name must be between 7 and 100 characters.")]
     password: Annotated[str, Field(min_length=8, max_length=255, description="Password must be between 8 and 255 characters.")]
     
-    class ConfigDict:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
     
 class UserResponsePublic(BaseModel):
     id: Annotated[uuid.UUID, Field()]
@@ -21,5 +20,4 @@ class UserResponsePublic(BaseModel):
     dateCreated: Annotated[datetime, Field()]
     dateLogin: Annotated[Optional[datetime], Field()]
     
-    class ConfigDict:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

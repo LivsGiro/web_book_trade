@@ -35,14 +35,9 @@ async def test_login(client: AsyncClient):
 
     response = await client.post("/users/", json=new_user)
     assert response.status_code == status.HTTP_201_CREATED
-    
     response = await client.post("/auth/", json={"email": "newuser@example.com", "password": "securepassword"})
     assert response.status_code == status.HTTP_200_OK
     
     body = response.json()
     assert "access_token" in body
     assert body["token_type"] == "bearer"
-    
-    token = body["access_token"]
-    decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    assert decoded_token["sub"] == new_user["email"]

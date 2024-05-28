@@ -26,4 +26,4 @@ class User(Base):
     dateCreated: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=func.now(), name="users_dat_created")
     dateLogin: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True, name="users_dat_login")
     
-    addresses = relationship("Address", back_populates="user")
+    addresses = relationship("Address", back_populates="user", cascade="all, delete-orphan")

@@ -1,0 +1,22 @@
+** Cadastro de Usuário
+    []-1: Usuário deverá cadastrar obrigatóriamente pais, cidade, bairro. Afim de localizar outros usuarios com livros ao redor
+    []-2: Poderá ou não incluir numero de telefone
+    []-3: Opção para enviar notificação e-mail e whatsapp
+    []-4: Opção para deixar visivel ou não e-mail e whatsapp
+**
+
+** Cadastro de Livros
+    []-1: Usuários poderá registrar livros para troca, doação e requisição
+    []-2: Possibilidade de deletar livros
+    []-3: 
+**
+
+**Funcionalidades
+    []-1: Ser possivel buscar todos livros
+    []-2: Ser possivel buscar todos usuarios
+    []-3: Ser possivel buscar todos livros de um Usuário
+    []-4: Ser possivel buscar todos livros para troca
+    []-5: Ser possivel buscar todos livros para doação
+    []-6: Ser possivel buscar todos livros para requisição
+    []-7: Ter filtro de localidade, pais, cidade e bairro para todas buscas referente aos livros e usuarios
+**

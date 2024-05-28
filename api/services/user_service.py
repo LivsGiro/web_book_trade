@@ -44,20 +44,23 @@ class UserService:
         else:
             raise UserAlreadyExistsException("User with this email already exists.")
         
-        user_data = data_user.model_dump() 
-        user_data = data_user.__dict__(exclude={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
+        user_data = data_user.model_dump(exclude={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
         user_data['dateCreated'] = datetime.now(timezone.utc) 
         new_user = User(**user_data) 
         
         try:
-            self.session.add(new_user)
-            await self.session.flush()
-            
+            try:
+                self.session.add(new_user)
+                await self.session.flush()
+            except Exception as e:
+                print(f"Exception during flush: {e}")
+                await self.session.rollback()
+                raise DataBaseTransactionException()
+
             user_data['userID'] = new_user.id
-            address_data = user_data.__dict__(include={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
+            address_data = user_data.model_dump(include={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
             address_controller = AddressController(self.session)
             await address_controller.create_address(new_user.id, address_data)
-            
             
             await self.session.commit()
             await self.session.refresh(new_user)

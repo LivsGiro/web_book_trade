@@ -19,6 +19,6 @@ class Address(Base):
     number: Mapped[str] = mapped_column(String(10), nullable=True, name="adres_cod_number")
     public: Mapped[bool] = mapped_column(Boolean(), nullable=True, default=True, name="adres_ind_public")
     
-    user = relationship("User", back_populates="adres")
+    user = relationship("User", back_populates="addresses")
     
     

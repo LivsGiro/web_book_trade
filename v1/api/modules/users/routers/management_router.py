@@ -6,7 +6,7 @@ from api.modules.books.schemas.book_schema import BookResponsePublic, BookReques
 
 router = APIRouter()
 
-@router.post("/", response_model=BookResponsePublic, status_code=status.HTTP_201_CREATED, summary="Create a new book", tags=["management"])
+@router.post("/books", response_model=BookResponsePublic, status_code=status.HTTP_201_CREATED, summary="Create a new book", tags=["management"])
 async def create_book(request: Request, 
                       data_book: BookRequestCreate, 
                       book_controller:ManagementController = Depends()

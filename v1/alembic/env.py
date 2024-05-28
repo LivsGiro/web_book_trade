@@ -2,15 +2,23 @@ import os
 import sys
 from logging.config import fileConfig
 
+from sqlalchemy import engine_from_config
 from sqlalchemy import create_engine
 from sqlalchemy import pool
 
 from alembic import context
 
 from dotenv import load_dotenv
-load_dotenv()
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+env = os.getenv("ENV", "development")
+if env == "production":
+    load_dotenv(".env.prod")
+elif env == "testing":
+    load_dotenv(".env.test")
+else:
+    load_dotenv(".env.dev")
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -25,17 +33,20 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from api.database.connection import Base 
-from api.models.User import User
-from api.models.Address import Address
+from api.shared.database.connection import Base 
+from api.modules.users.models.User import User
+from api.modules.books.models.Book import Book
 
 target_metadata = None
 
-from api.database.connection import Base
+from api.shared.database.connection import Base, DATABASE_URL
 
-DATABASE_URL = os.getenv('DATABASE_URL')
 config.set_main_option('sqlalchemy.url', DATABASE_URL)
+
+# Alterar a URL para usar o driver síncrono
 SYNC_DATABASE_URL = DATABASE_URL.replace("asyncpg", "psycopg2")
+
+# set the URL dynamically from the SYNC_DATABASE_URL
 config.set_main_option('sqlalchemy.url', SYNC_DATABASE_URL)
 
 target_metadata = Base.metadata

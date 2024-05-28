@@ -45,13 +45,18 @@ class UserService:
             raise UserAlreadyExistsException("User with this email already exists.")
         
         user_data = data_user.model_dump() 
+        user_data = data_user.__dict__(exclude={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
         user_data['dateCreated'] = datetime.now(timezone.utc) 
         new_user = User(**user_data) 
         
         try:
             self.session.add(new_user)
-            address_controller = AddressController()
-            await address_controller.create_address_user()
+            await self.session.flush()
+            
+            user_data['userID'] = new_user.id
+            address_data = user_data.__dict__(include={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
+            address_controller = AddressController(self.session)
+            await address_controller.create_address(new_user.id, address_data)
             
             
             await self.session.commit()

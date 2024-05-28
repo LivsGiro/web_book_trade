@@ -32,7 +32,7 @@
 4. Create environment variable files for different environments:
 
    - **.env**
-     ```
+     ```sh
     DATABASE_USER=root
     DATABASE_PASSWORD=you_user
     DATABASE_DB=you_db

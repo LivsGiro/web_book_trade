@@ -40,7 +40,7 @@
     DATABASE_VOLUME=you_volume
     DATABASE_CONTAINER_NAME=you_name
     DATABASE_URL=postgresql+asyncpg://root:you_user@localhost:you_port/you_db
-
+    ```
 
 access the .env.example file to see an example
 

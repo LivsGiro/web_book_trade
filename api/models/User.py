@@ -1,29 +1,24 @@
 import uuid
-import enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Boolean, DateTime, func
+from sqlalchemy import String, Boolean, Date, DateTime, func
 from datetime import datetime, date
 
 from api.database.connection import Base
 
-class Gender(enum.Enum):
-    Masculino = "M"
-    Feminino = "F"
-    Outro = "O"
 
 class User(Base):
     __tablename__ = "users"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, name="users_id")
-    cpf: Mapped[str] = mapped_column(String(11), nullable=False, index=True, unique=True, name="users_cod_cpf")
-    email: Mapped[str] = mapped_column(String(45), nullable=False, index=True, unique=True, name="users_email")
-    name: Mapped[str] = mapped_column(String(100), nullable=False, index=True, name="users_nam")
-    password: Mapped[str] = mapped_column(String(255), nullable=False, name="users_has_password")
-    sex: Mapped[str] = mapped_column(String(1), nullable=False, name="users_cod_sex")
-    dateBirth: Mapped[date] = mapped_column(DateTime, nullable=False, name="users_dat_birth")
-    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, name="users_ind_active")
-    dateCreated: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=func.now(), name="users_dat_created")
-    dateLogin: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True, name="users_dat_login")
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    cpf: Mapped[str] = mapped_column(String(11), nullable=False, index=True, unique=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    email: Mapped[str] = mapped_column(String(45), nullable=False, index=True, unique=True)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    sex: Mapped[str] = mapped_column(String(1), nullable=False)
+    date_birth: Mapped[date] = mapped_column(Date, nullable=False)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    date_created: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=func.now())
+    date_login: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     
     addresses = relationship("Address", back_populates="user", cascade="all, delete-orphan")

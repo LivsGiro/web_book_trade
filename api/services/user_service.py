@@ -8,6 +8,7 @@ from api.controllers.address_controller import AddressController
 from api.schemas.user_schema import UserRequestCreate, UserResponsePublic
 from api.handlers.exceptions.user_exceptions import UserAlreadyExistsException, UserNotFoundException
 from api.handlers.exceptions.database_exceptions import DataBaseTransactionException
+from sqlalchemy.exc import SQLAlchemyError
 
 class UserService:
     """
@@ -44,29 +45,30 @@ class UserService:
         else:
             raise UserAlreadyExistsException("User with this email already exists.")
         
-        user_data = data_user.model_dump(exclude={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
-        user_data['dateCreated'] = datetime.now(timezone.utc) 
-        new_user = User(**user_data) 
-        
         try:
-            try:
-                self.session.add(new_user)
-                await self.session.flush()
-            except Exception as e:
-                print(f"Exception during flush: {e}")
-                await self.session.rollback()
-                raise DataBaseTransactionException()
-
-            user_data['userID'] = new_user.id
-            address_data = user_data.model_dump(include={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
-            address_controller = AddressController(self.session)
-            await address_controller.create_address(new_user.id, address_data)
+            user_data = data_user.model_dump(exclude={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
+            user_data['date_created'] = datetime.now(timezone.utc) 
+            new_user = User(**user_data) 
+            self.session.add(new_user)
+            await self.session.flush()
+             
+            address_data = data_user.model_dump(include={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
+            address_data['user_id'] = new_user.id
             
+            address_controller = AddressController(self.session)         
+            await address_controller.create_address_user(address_data)   
+            print("Depois do controller")         
             await self.session.commit()
             await self.session.refresh(new_user)
-        except:
+        except SQLAlchemyError as e:
             await self.session.rollback()
-            raise DataBaseTransactionException()
+            print(f"SQLAlchemy Error: {e}")
+            raise DataBaseTransactionException(f"Database transaction failed: {e}")
+        except Exception as e:
+            await self.session.rollback()
+            print(f"Unexpected error: {e}")
+            raise
+
         
         return new_user
             

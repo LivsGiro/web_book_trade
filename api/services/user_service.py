@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from api.models.User import User
 from api.controllers.address_controller import AddressController
 from api.schemas.user_schema import UserRequestCreate, UserResponsePublic
+from api.schemas.address_schema import AddressRequestCreate
 from api.handlers.exceptions.user_exceptions import UserAlreadyExistsException, UserNotFoundException
 from api.handlers.exceptions.database_exceptions import DataBaseTransactionException
 from sqlalchemy.exc import SQLAlchemyError
@@ -54,21 +55,18 @@ class UserService:
              
             address_data = data_user.model_dump(include={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
             address_data['user_id'] = new_user.id
-            
+            address_data = AddressRequestCreate(**address_data)
             address_controller = AddressController(self.session)         
-            await address_controller.create_address_user(address_data)   
-            print("Depois do controller")         
+            
+            await address_controller.create_address_user(address_data, commit=True)      
             await self.session.commit()
             await self.session.refresh(new_user)
         except SQLAlchemyError as e:
             await self.session.rollback()
-            print(f"SQLAlchemy Error: {e}")
             raise DataBaseTransactionException(f"Database transaction failed: {e}")
         except Exception as e:
             await self.session.rollback()
-            print(f"Unexpected error: {e}")
-            raise
-
+            raise DataBaseTransactionException("An unexpected error occurred. Please contact support if this continues.")
         
         return new_user
             

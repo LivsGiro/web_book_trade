@@ -12,5 +12,15 @@ class AddressController:
     def __init__(self, session: AsyncSession):
         self.address_service = AddressService(session)
         
-    async def create_address_user(self, address_user:AddressRequestCreate) -> AddressResponsePublic:
-        return await self.address_service.create_address_user(address_user)
+    async def create_address_user(self, address_user:AddressRequestCreate, commit=True) -> AddressResponsePublic:
+        """
+        Creates a new address for a user.
+
+        Args:
+            address_user (AddressRequestCreate): The address data to be added.
+            commit (bool): Flag to commit the transaction. Defaults to True.
+
+        Returns:
+            AddressResponsePublic: The public view of the created address, suitable for returning in API responses.
+        """
+        return await self.address_service.create_address_user(address_user, commit=commit)

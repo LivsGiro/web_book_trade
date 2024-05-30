@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 
+from api.utils.validate_cep import validate_cep
 from api.models.Address import Address
 from api.schemas.address_schema import AddressRequestCreate, AddressResponsePublic
 from api.handlers.exceptions.database_exceptions import DataBaseTransactionException
@@ -27,19 +28,23 @@ class AddressService:
         Raises:
             DataBaseTransactionException: If there is an issue during the database transaction.
         """
-        address_data = address_data.model_dump()                
+        address_data = address_data.model_dump()        
+
+        data_cep = validate_cep(address_data['cep'])        
+        address_data['state'] = data_cep['uf']
+        address_data['city'] = data_cep['localidade']
+        address_data['neighborhood'] = data_cep['bairro']
+        address_data['road'] = data_cep['logradouro']
+
         new_address = Address(**address_data)
         
         try:
-            self.session.add(new_address)                
+            self.session.add(new_address)
             if commit == True:                
-                await self.session.commit()                
+                await self.session.commit()
             await self.session.refresh(new_address)
-        except SQLAlchemyError as e:
+        except Exception:
             await self.session.rollback()
-            raise DataBaseTransactionException(f"Database transaction failed: {e}")
-        except Exception as e:
-            await self.session.rollback()
-            raise DataBaseTransactionException("An unexpected error occurred. Please contact support if this continues.")
+            raise DataBaseTransactionException(Exception)
 
         return new_address

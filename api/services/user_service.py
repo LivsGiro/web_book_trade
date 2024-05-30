@@ -9,7 +9,6 @@ from api.schemas.user_schema import UserRequestCreate, UserResponsePublic
 from api.schemas.address_schema import AddressRequestCreate
 from api.handlers.exceptions.user_exceptions import UserAlreadyExistsException, UserNotFoundException
 from api.handlers.exceptions.database_exceptions import DataBaseTransactionException
-from sqlalchemy.exc import SQLAlchemyError
 
 class UserService:
     """
@@ -32,41 +31,27 @@ class UserService:
             UserAlreadyExistsException: If a user with the given CPF or email already exists.
             DataBaseTransactionException: If there is an error during the database transaction.
         """
-        try:
-            await self.get_user_by_cpf(data_user.cpf)
-        except UserNotFoundException:
-            pass
-        else:
-            raise UserAlreadyExistsException("User with this cpf already exists.")
+        user_data = data_user.model_dump(exclude={'cep', 'number', 'public'})        
+        await self.check_user_exists(user_data['cpf'], user_data['email'], user_data['whatsapp'])
+        user_data['date_created'] = datetime.now(timezone.utc)         
         
         try:
-            await self.get_user_by_email(data_user.email)
-        except UserNotFoundException:
-            pass
-        else:
-            raise UserAlreadyExistsException("User with this email already exists.")
-        
-        try:
-            user_data = data_user.model_dump(exclude={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
-            user_data['date_created'] = datetime.now(timezone.utc) 
             new_user = User(**user_data) 
             self.session.add(new_user)
             await self.session.flush()
-             
-            address_data = data_user.model_dump(include={'country', 'state', 'city', 'neighborhood', 'road', 'number', 'public'})
+            
+            address_data = data_user.model_dump(include={'cep', 'number', 'public'})
             address_data['user_id'] = new_user.id
+            
             address_data = AddressRequestCreate(**address_data)
             address_controller = AddressController(self.session)         
             
             await address_controller.create_address_user(address_data, commit=True)      
             await self.session.commit()
             await self.session.refresh(new_user)
-        except SQLAlchemyError as e:
+        except Exception:
             await self.session.rollback()
-            raise DataBaseTransactionException(f"Database transaction failed: {e}")
-        except Exception as e:
-            await self.session.rollback()
-            raise DataBaseTransactionException("An unexpected error occurred. Please contact support if this continues.")
+            raise DataBaseTransactionException(Exception)
         
         return new_user
             
@@ -96,13 +81,28 @@ class UserService:
         
         return users
     
-    async def check_user_exists(self, cpf_user: str, email_user: str) -> None:
-        if await self.get_user_by_cpf(cpf_user):
+    async def check_user_exists(self, cpf_user: str, email_user: str, whatsapp: str) -> None:
+        try:
+            await self.get_user_by_cpf(cpf_user)
+        except UserNotFoundException:
+            pass
+        else:
             raise UserAlreadyExistsException("User with this cpf already exists.")
-        if await self.get_user_by_email(email_user):
-            raise UserAlreadyExistsException("User with this email already exists.")
         
-        return None
+        try:
+            await self.get_user_by_email(email_user)
+        except UserNotFoundException:
+            pass
+        else:
+            raise UserAlreadyExistsException("User with this email already exists.")       
+        
+        try:
+            await self.get_user_by_whatsapp(whatsapp)   
+        except UserNotFoundException:
+            pass
+        else:
+            raise UserAlreadyExistsException("User with this whastapp already exists.")       
+        
     
     async def get_user_by_id(self, id_user: str) -> UserResponsePublic:
         """
@@ -125,7 +125,7 @@ class UserService:
         
         return user
         
-    async def get_user_by_cpf(self, cpf_user: str):
+    async def get_user_by_cpf(self, cpf_user: str) -> UserResponsePublic:
         """
         Retrieves a user by their CPF.
 
@@ -139,6 +139,27 @@ class UserService:
             UserNotFoundException: If no user is found with the given CPF.
         """
         stmt = select(User).filter(User.cpf == cpf_user)
+        result = await self.session.execute(stmt)
+        user = result.scalars().first()
+        if not user:
+            raise UserNotFoundException()
+        
+        return user
+    
+    async def get_user_by_whatsapp(self, whatsapp_user: str) -> UserResponsePublic:
+        """
+        Retrieves a user by their whatsapp.
+
+        Args:
+            whatsapp (str): The whatsapp of the user.
+
+        Returns:
+            User: The user with the given whatsapp.
+
+        Raises:
+            UserNotFoundException: If no user is found with the given whatsapp.
+        """
+        stmt = select(User).filter(User.whatsapp == whatsapp_user)
         result = await self.session.execute(stmt)
         user = result.scalars().first()
         if not user:

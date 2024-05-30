@@ -14,10 +14,13 @@ class User(Base):
     cpf: Mapped[str] = mapped_column(String(11), nullable=False, index=True, unique=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     email: Mapped[str] = mapped_column(String(45), nullable=False, index=True, unique=True)
+    whatsapp: Mapped[str] = mapped_column(String(14), nullable=True, unique=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
     date_birth: Mapped[date] = mapped_column(Date, nullable=False)
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    notification_email: Mapped[bool] = mapped_column(Boolean, default=True)
+    notification_whats: Mapped[bool] = mapped_column(Boolean, default=True)
     date_created: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=func.now())
     date_login: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     

@@ -1,5 +1,5 @@
 ** Cadastro de Usuário
-    []-1: Usuário deverá cadastrar obrigatóriamente pais, cidade, bairro. Afim de localizar outros usuarios com livros ao redor
+    [X]-1: Usuário deverá cadastrar obrigatóriamente pais, cidade, bairro. Afim de localizar outros usuarios com livros ao redor
     []-2: Poderá ou não incluir numero de telefone
     []-3: Opção para enviar notificação e-mail e whatsapp
     []-4: Opção para deixar visivel ou não e-mail e whatsapp

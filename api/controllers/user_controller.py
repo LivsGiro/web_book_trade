@@ -13,6 +13,15 @@ class UserController:
         self.user_service = UserService(session)
         
     async def create_new_user(self, data_user: UserRequestCreate) -> UserResponsePublic:
+        """
+        Creates a new user in the database.
+
+        Args:
+            data_user(dict): The data for the new user.
+
+        Returns:
+            User: The created user.
+        """
         return await self.user_service.create_new_user(data_user)
 
     async def find_all_users(self, skip: int, limit: int, active: bool) -> List[UserResponsePublic]:

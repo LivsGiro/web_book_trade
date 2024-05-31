@@ -63,8 +63,7 @@ coverage.xml
 
 # Instalação de envs
 *.env
-*.env.dev
-*.env.prod
+*.env.development
 *.env.test
 .env
 .env.

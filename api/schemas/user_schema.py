@@ -18,7 +18,7 @@ class UserRequestCreate(BaseSchema):
     notification_email: Optional[Annotated[bool, Field(default=True, description='Flag to indicate if the notification by email')]]
     notification_whats: Optional[Annotated[bool, Field(default=True, description='Flag to indicate if the notification by whatsapp')]]
 
-    cep: Annotated[int, Field(..., length=8, description='CEP must be either 12345678 format.')]
+    cep: Annotated[int, Field(..., json_schema_extra={'length': 8}, description='CEP must be either 12345678 format.')]
     number: Optional[Annotated[str, Field(max_length=10, description='House or building number, up to 10 characters.')]] = None
     public: Annotated[bool, Field(default=True, description='Flag to indicate if the address should be public. True for public, False for private.')]
     

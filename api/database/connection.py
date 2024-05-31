@@ -3,10 +3,8 @@ from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-load_dotenv()
-
 DATABASE_URL = os.getenv('DATABASE_URL')
-print(f"Using database URL: {DATABASE_URL}")
+#DATABASE_URL = "postgresql+asyncpg://root:1234@localhost:5439/book_trade_test"
 
 Base = declarative_base()
 
@@ -17,9 +15,3 @@ async_session = sessionmaker(
     class_=AsyncSession,
     expire_on_commit=False
 )
-
-def drop_tables(connection):
-    Base.metadata.drop_all(bind=connection)
-
-def create_tables(connection):
-    Base.metadata.create_all(bind=connection)

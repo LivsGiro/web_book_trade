@@ -1,13 +1,20 @@
 import pytest
+import asyncio
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from api.shared.database.connection import Base
-
+from api.database.connection import Base
 from api.main import app
 
-BASE_URL = 'http://test'
-DATABASE_URL = "sqlite+aiosqlite:///.sqlite"
+# Definindo a URL do banco de dados
+DATABASE_URL = "postgresql+asyncpg://root:1234@localhost:5439/book_trade_test"
+
+@pytest.fixture(scope='session')
+def event_loop(event_loop_policy):
+    loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()
+
 
 @pytest.fixture(scope='function', autouse=True)
 async def setup_database():
@@ -29,5 +36,5 @@ async def setup_database():
 @pytest.fixture
 async def client():
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url=BASE_URL) as ac:
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac

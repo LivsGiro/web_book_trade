@@ -8,7 +8,7 @@ from api.schemas.BaseSchema import BaseSchema
 
 class AddressRequestCreate(BaseSchema):
     user_id: uuid.UUID = Field(default_factory=uuid.uuid4, description="Unique identifier of the associated user.")
-    cep: Annotated[int, Field(..., length=8, description='CEP must be either 12345678 format.')]
+    cep: Annotated[int, Field(..., json_schema_extra={'length': 8}, description='CEP must be either 12345678 format.')]
     number: Optional[Annotated[str, Field(max_length=10, description='House or building number, up to 10 characters.')]]
     public: Annotated[bool, Field(default=True, description='Flag to indicate if the address should be public. True for public, False for private.')]
     

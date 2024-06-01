@@ -17,6 +17,7 @@ class UserService:
     """
     def __init__(self, session:AsyncSession):
         self.session = session
+      
         
     async def create_new_user(self, data_user: UserRequestCreate) -> UserResponsePublic:
         """
@@ -84,6 +85,7 @@ class UserService:
         
         return users
     
+    
     async def check_user_exists(self, cpf_user: str, email_user: str, whatsapp: str) -> None:
         try:
             await self.get_user_by_cpf(cpf_user)
@@ -127,6 +129,7 @@ class UserService:
             raise UserNotFoundException()
         
         return user
+    
         
     async def get_user_by_cpf(self, cpf_user: str) -> UserResponsePublic:
         """
@@ -149,6 +152,7 @@ class UserService:
         
         return user
     
+    
     async def get_user_by_whatsapp(self, whatsapp_user: str) -> UserResponsePublic:
         """
         Retrieves a user by their whatsapp.
@@ -169,6 +173,7 @@ class UserService:
             raise UserNotFoundException()
         
         return user
+    
         
     async def get_user_by_email(self, email_user: str) -> UserResponsePublic:
         """

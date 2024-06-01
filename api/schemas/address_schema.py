@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from typing import Annotated, Optional
 from pydantic import Field
 
-from api.schemas.BaseSchema import BaseSchema
+from api.schemas.base_schema import BaseSchema
 
 
 class AddressRequestCreate(BaseSchema):

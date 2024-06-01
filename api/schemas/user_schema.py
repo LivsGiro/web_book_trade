@@ -1,11 +1,10 @@
-import httpx
 import uuid
 from typing import Annotated, Optional
 from typing import Optional
-from pydantic import Field, EmailStr, field_validator
+from pydantic import Field, EmailStr
 from datetime import datetime, date
 
-from api.schemas.BaseSchema import BaseSchema
+from api.schemas.base_schema import BaseSchema
 
 class UserRequestCreate(BaseSchema):
     cpf: Annotated[str, Field(..., min_length=11, max_length=11, description='CPF must be exactly 11 characters.')]

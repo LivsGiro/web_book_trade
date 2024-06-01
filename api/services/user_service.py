@@ -1,12 +1,13 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 from typing import List
 from datetime import datetime, timezone
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from api.models.User import User
 from api.controllers.address_controller import AddressController
 from api.schemas.user_schema import UserRequestCreate, UserResponsePublic
 from api.schemas.address_schema import AddressRequestCreate
+from api.utils.crypt_password import has_password
 from api.handlers.exceptions.user_exceptions import UserAlreadyExistsException, UserNotFoundException
 from api.handlers.exceptions.database_exceptions import DataBaseTransactionException
 
@@ -33,13 +34,15 @@ class UserService:
         """
         user_data = data_user.model_dump(exclude={'cep', 'number', 'public'})        
         await self.check_user_exists(user_data['cpf'], user_data['email'], user_data['whatsapp'])
-        user_data['date_created'] = datetime.now(timezone.utc)         
+        
+        hashed_password = has_password(user_data['password'])
+        user_data['password'] = hashed_password
+        user_data['date_created'] = datetime.now(timezone.utc)
         
         try:
             new_user = User(**user_data) 
             self.session.add(new_user)
             await self.session.flush()
-            
             address_data = data_user.model_dump(include={'cep', 'number', 'public'})
             address_data['user_id'] = new_user.id
             

@@ -30,7 +30,7 @@ class AddressService:
         """
         address_data = address_data.model_dump()        
 
-        data_cep = validate_cep(address_data['cep'])        
+        data_cep = await validate_cep(address_data['cep'])        
         address_data['state'] = data_cep['uf']
         address_data['city'] = data_cep['localidade']
         address_data['neighborhood'] = data_cep['bairro']
